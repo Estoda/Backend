@@ -3,5 +3,5 @@
 public class RegisterTherapistRequest : RegisterRequest
 {
     public string LicenseNumber { get; set; } = null!;
-    public string LicenseDucumentPath { get; set; } = null!;
+    public string LicenseDocumentPath { get; set; } = null!;
 }

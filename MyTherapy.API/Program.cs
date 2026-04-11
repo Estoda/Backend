@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MyTherapy.API.Middlewares;
 using MyTherapy.Application.Interfaces;
 using MyTherapy.Infrastructure.Persistence;
 using MyTherapy.Infrastructure.Services;
@@ -37,6 +38,8 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer("Bearer", options =>
     };
 });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -45,13 +48,15 @@ using (var scope = app.Services.CreateScope())
     DbInitializer.SeedAdmin(db);
 }
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment())
-    {
-        app.MapOpenApi();
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseMiddleware<ExceptionMiddleware>(); // Global exception handling middleware
 
 app.UseHttpsRedirection();
 

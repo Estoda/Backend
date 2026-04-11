@@ -10,6 +10,7 @@ using MyTherapy.Domain.Entities;
 
 namespace MyTherapy.API.Controllers;
 
+[Authorize(Roles = "Patient")]
 [ApiController]
 [Route("api/patient/availability")]
 public class PatientAvailabilityController : Controller

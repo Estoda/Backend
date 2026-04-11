@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using MyTherapy.Domain.Enums;
 using MyTherapy.Infrastructure.Persistence;
+using MyTherapy.Application.DTOs.Therapists;
 
 
 namespace MyTherapy.API.Controllers;
@@ -25,7 +26,17 @@ public class AdminTherapistsController : ControllerBase
             .Where(t => t.VerificationStatus == VerificationStatus.Pending)
             .ToListAsync();
 
-        return Ok(therapists);
+        var result = therapists.Select(t => new TherapistResponse
+        {
+            Id = t.Id,
+            FullName = t.User.FullName,
+            Email = t.User.Email,
+            LicenseNumber = t.LicenseNumber,
+            VerificationStatus = t.VerificationStatus.ToString(),
+            CreatedAt = t.CreatedAt
+        });
+
+        return Ok(result);
     }
 
     [HttpPost("{id}/approve")] // id = therapist's id not user id

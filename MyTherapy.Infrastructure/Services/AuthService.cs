@@ -32,7 +32,7 @@ public class AuthService : IAuthService
     private async Task<AuthResponse> RegisterAsync(RegisterRequest request, Role role)
     {
         if (await _context.Users.AnyAsync(u => u.Email == request.Email))
-            throw new Exception("Email already exists!");
+            throw new ArgumentException("Email already exists!");
 
         var user = new User
         {
@@ -52,7 +52,7 @@ public class AuthService : IAuthService
             {
                 UserId = user.Id,
                 LicenseNumber = ((RegisterTherapistRequest)request).LicenseNumber,
-                LicenseDocumentPath = ((RegisterTherapistRequest)request).LicenseDucumentPath,
+                LicenseDocumentPath = ((RegisterTherapistRequest)request).LicenseDocumentPath,
             };
             _context.Therapists.Add(therapist);
             await _context.SaveChangesAsync();
@@ -66,7 +66,7 @@ public class AuthService : IAuthService
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw new Exception("Invalid credentials!");
+            throw new UnauthorizedAccessException("Invalid credentials!");
 
         return GenerateToken(user);
     }
